@@ -5,7 +5,8 @@ import statistics
 import math
 import plot
 
-def densityconverter(star_file,window,save_file):
+
+def densitygraph(star_file,window,save_file):
 	star_table=np.loadtxt(star_file, delimiter=' ')
 	starTranspose=star_table.transpose()
 	newStar=np.append(starTranspose,[np.zeros(len(star_table))], axis=0)
@@ -25,26 +26,29 @@ def densityconverter(star_file,window,save_file):
 	plot.plotgraph(saveTabl.transpose()[0],saveTabl.transpose()[1],'b','Time(s)','Density','Density of changes')
 	return
 
-def densityconverter2(star_file,save_file):
+
+def meangraph(star_file,window,save_file):
 	star_table=np.loadtxt(star_file, delimiter=' ')
 	starTranspose=star_table.transpose()
-	newStar=np.append(starTranspose,[np.zeros(len(star_table))], axis=0)
-	for k in range(len(star_table)):
-		if newStar[1][k]!=0:
-			newStar[2][k]=1
-	newYlist=[]
-	starsum=0
-	for i in range(0,len(star_table)):
-		starsum+=newStar[2][i]
-		newYlist.append(1-(starsum/(i+1)))
-	saveTabl=np.column_stack((starTranspose[0],np.array(newYlist)))
-	plot.plotgraph(saveTabl.transpose()[0],saveTabl.transpose()[1],'b','Time(s)','Density','Density of changes')
+	summean=0
+	for j in range(window):
+		if starTranspose[1][j]>=0:
+			summean+=starTranspose[1][j]
+	mean=summean/window
+	newY=[mean]*window
+	k=window
+	while k<len(star_table):
+		summean=0
+		for i in range(window):
+			if starTranspose[1][i]>=0:
+				summean+=starTranspose[1][j]
+		mean=summean/window
+		newY.append(newY)
+		k+=1
+	saveTabl=np.column_stack((starTranspose[0],np.array(newY)))
+	plot.plotgraph(saveTabl.transpose()[0],saveTabl.transpose()[1],'b','Time(s)','mean','mean of changes')
 	return
 
-if __name__ == "__main__":
-	###########Run densityconverter##################
-	densityconverter("../data/aux6pointsGMA2.txt",20000,"../data/aux6density1.txt")
-	#densityconverter2("../data/aux6pointsGMA.txt","../data/aux6density2.txt")
 
 
 
